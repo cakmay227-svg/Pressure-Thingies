@@ -1,0 +1,229 @@
+local spawnEntity = loadstring(game:HttpGet("https://codeberg.org/qjjdjdjjd/Pressure-Files/raw/branch/main/Pressure-Entity-Spawner"))()
+
+local HttpService = game:GetService("HttpService")
+
+local Folder = "GitAudCache"
+
+if not isfolder(Folder) then
+	makefolder(Folder)
+end
+
+local function Hash(Text)
+	local Hash = 2166136261
+
+	for i = 1, #Text do
+		Hash = bit32.bxor(Hash, string.byte(Text, i))
+		Hash = (Hash * 16777619) % 4294967296
+	end
+
+	return string.format("%08X", Hash)
+end
+
+function GitAud(Url)
+	local File = Folder .. "/" .. Hash(Url) .. ".mp3"
+
+	if not isfile(File) then
+		writefile(File, game:HttpGet(Url))
+	end
+
+	return getsynasset and getsynasset(File)
+		or getcustomasset and getcustomasset(File)
+		or error("Executor doesn't support custom assets.")
+end
+
+function GitCustomSound(Sound, Url)
+	local Asset = GitAud(Url)
+
+	Sound.SoundId = Asset
+	Sound.Loaded:Wait()
+
+	return Sound
+end
+
+local Sound = Instance.new("Sound")
+Sound.Volume = 2
+Sound.Parent = workspace
+Sound.Name = "FrogerJumpscare" 
+
+GitCustomSound(
+	Sound,
+	"https://github.com/cakmay227-svg/random/raw/refs/heads/main/XRecorder_Edited_20260722_03.mp3"
+)
+
+local ContentProvider = game:GetService("ContentProvider")
+
+local JumpscareImages = {
+	"rbxassetid://96835242250246",
+	"rbxassetid://111183933445054"
+}
+
+local Cache = {}
+
+for _, Id in ipairs(JumpscareImages) do
+	local Img = Instance.new("ImageLabel")
+	Img.Image = Id
+	table.insert(Cache, Img)
+end
+
+task.spawn(function()
+	ContentProvider:PreloadAsync(Cache)
+
+	for _, Img in ipairs(Cache) do
+		Img:Destroy()
+	end
+end)
+
+spawnEntity({
+    AssetId = "https://codeberg.org/qjjdjdjjd/cak/raw/branch/main/Froger.txt.rbxmx",
+    EntityName = "Froger",
+    MoveSpeed = 90,
+    HitboxRadius = 30,
+    ShakeRadius = 100,
+    DamageAmount = 0,    
+    InstantKill = true,
+    ConstantBloodSucking = false,
+    DelayEachDamage = 0.1,
+    
+    DelayWhenSpawned = true,     
+    Delay = 5, 
+    Rebounding = true,  
+    Reversed = false, 
+    MinRebounds = 2,   
+    MaxRebounds = 2,
+    DelayEachRebound = 2.5,
+    WallPenetrating = false,
+    IgnoreHiding = true,
+    RoomLimits = false,
+    RoomLimitValue = 5,
+    EntityLifeTime = "Forever",
+    
+    YOffset = Vector3.new(0, 0, 0),
+    DespawnYOffset = Vector3.new(0, 300, 0),
+    Tolerance = 0.1,
+    FlickerSpeed = 75,
+    MaxDarkness = 0.2,
+    ShakeIntensity = 0.5,
+    ShakeSpeedMultiplier = 1.5,
+    LightFlickerTime = 0.45,       
+    
+    EnableFlicker = true,
+    EnableShake = true,
+    EnableBlackout = true,
+    EnableBreakLights = true,
+    
+    GithubSound = "",         
+    PlayGitSoundWhenSpawned = false, 
+    SoundVolume = 1,        
+    SoundPlaybackSpeed = 1,
+
+    LightBreakRange = 35,                          
+    LightDarkenPercent = 0.11,                
+    LightAutoScanInterval = 0.1,              
+    
+    LightSoundId = "rbxassetid://13303926122", 
+    LightSoundVolume = 0.4,                   
+    LightSoundDistance = 20,                 
+    
+    LightParticleTexture = "rbxassetid://257173628", 
+    LightParticleDuration = 0.3,
+    
+    DeathImage = "rbxassetid://79804547175661",
+    DeathName = "Froger",
+    DeathNotes = "Bootleg",
+    DeathImageColor = Color3.fromRGB(255, 255, 255), -- Mặc định là trắng (giữ nguyên màu ảnh)
+    
+    OnSpawn = function() end,
+    OnMoveStart = function() end,
+    OnRoomEnter = function(roomName) end,
+    OnDamagePlayer = function() end,
+    OnKillPlayer = function()
+    local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+
+local player = Players.LocalPlayer
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "Jumpscare"
+gui.IgnoreGuiInset = true
+gui.ResetOnSpawn = false
+gui.DisplayOrder = 999999
+gui.Parent = player.PlayerGui
+
+local bg = Instance.new("Frame")
+bg.Size = UDim2.fromScale(1,1)
+bg.Position = UDim2.fromScale(0,0)
+bg.BackgroundColor3 = Color3.new(0,0,0)
+bg.BorderSizePixel = 0
+bg.Parent = gui
+
+local image = Instance.new("ImageLabel")
+image.BackgroundTransparency = 1
+image.AnchorPoint = Vector2.new(0.5,0.5)
+image.Position = UDim2.fromScale(0.5,0.5)
+image.Size = UDim2.fromOffset(500,500)
+image.Image = "rbxassetid://96835242250246"
+image.Parent = bg
+
+local finalImage = "rbxassetid://111183933445054"
+
+-- preload ảnh kết thúc trướ
+
+Sound:Play()
+
+Sound.Ended:Connect(function() 
+Sound:Destroy() 
+end) 
+
+local shakeRunning = true
+
+TweenService:Create(
+	image,
+	TweenInfo.new(
+		0.6,
+		Enum.EasingStyle.Linear,
+		Enum.EasingDirection.Out
+	),
+	{
+		Size = UDim2.fromOffset(1500,1500)
+	}
+):Play()
+
+task.spawn(function()
+	local basePos = UDim2.fromScale(0.5,0.5)
+	local offset = 3
+	local right = true
+
+	while shakeRunning do
+		TweenService:Create(
+			image,
+			TweenInfo.new(
+				0.01,
+				Enum.EasingStyle.Linear
+			),
+			{
+				Position = basePos + UDim2.fromOffset(right and offset or -offset,0)
+			}
+		):Play()
+
+		right = not right
+		task.wait(0.03)
+	end
+
+	image.Position = basePos
+end)
+
+task.delay(0.6,function()
+	-- dừng rung
+	shakeRunning = false
+
+	-- đổi ảnh sau khi preload xong
+	image.Image = finalImage
+
+	task.wait(0.15)
+
+	gui:Destroy()
+end)
+ end,
+    OnDespawning = function() end,
+    OnDespawned = function() end,
+})
