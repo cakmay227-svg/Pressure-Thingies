@@ -1,0 +1,372 @@
+local spawnEntity = loadstring(game:HttpGet("https://codeberg.org/qjjdjdjjd/Pressure-Files/raw/branch/main/Pressure-Entity-Spawner"))()
+
+local BlitzTexture = "rbxassetid://116498683588372"
+
+game:GetService("ContentProvider"):PreloadAsync({
+	BlitzTexture
+})
+
+spawnEntity({
+    AssetId = "https://codeberg.org/qjjdjdjjd/cak/raw/branch/main/Place_12552538292_Part_Blitz_1784292281.txt.rbxmx",
+    EntityName = "Blitz",
+    MoveSpeed = 400,
+    HitboxRadius = 35,
+    ShakeRadius = 120,
+    DamageAmount = 0,    
+    InstantKill = false,
+    ConstantBloodSucking = false,
+    DelayEachDamage = 0.1,
+    
+    DelayWhenSpawned = true,     
+    Delay = 7, 
+    Rebounding = false,  
+    Reversed = false, 
+    MinRebounds = 1,   
+    MaxRebounds = 1,
+    DelayEachRebound = 0,
+    WallPenetrating = false,
+    IgnoreHiding = true,
+    RoomLimits = false,
+    RoomLimitValue = 5,
+    EntityLifeTime = "Forever",
+    
+    YOffset = Vector3.new(0, 0, 0),
+    DespawnYOffset = Vector3.new(0, 500, 0),
+    Tolerance = 0.1,
+    FlickerSpeed = 75,
+    MaxDarkness = 0.2,
+    ShakeIntensity = 0.5,
+    ShakeSpeedMultiplier = 1.5,
+    LightFlickerTime = 0.3,       
+    
+    EnableFlicker = true,
+    EnableShake = true,
+    EnableBlackout = true,
+    EnableBreakLights = true,
+    
+    GithubSound = "",         
+    PlayGitSoundWhenSpawned = false, 
+    SoundVolume = 1,        
+    SoundPlaybackSpeed = 1,
+
+    LightBreakRange = 35,                          
+    LightDarkenPercent = 0.11,                
+    LightAutoScanInterval = 0.1,              
+    
+    LightSoundId = "rbxassetid://13303926122", 
+    LightSoundVolume = 0.5,                   
+    LightSoundDistance = 45,                 
+    
+    LightParticleTexture = "rbxassetid://257173628", 
+    LightParticleDuration = 0.3,
+    
+    DeathImage = "rbxassetid://79804547175661",
+    DeathName = "Blitz",
+    DeathNotes = "Bootleg",
+    DeathImageColor = Color3.fromRGB(255, 255, 255), -- Mặc định là trắng (giữ nguyên màu ảnh)
+    
+    OnSpawn = function() end,
+    OnMoveStart = function() end,
+    OnRoomEnter = function(roomName) end,
+    OnDamagePlayer = function()
+    local BlitzClone = workspace.Blitz:Clone()
+    BlitzClone:PivotTo(workspace.Blitz:GetPivot())
+BlitzClone.Name = "BlitzClone"
+BlitzClone.Parent = workspace
+BlitzClone.Blitz.Moving.Playing = false
+BlitzClone.Blitz.Screaming.Playing = false
+BlitzClone.Blitz.Blitz.Texture = BlitzTexture
+BlitzClone.Blitz.Blitz.Brightness = 10
+BlitzClone.Blitz.BlitzEyes.Enabled = false
+local Vfx = game:GetService("Lighting").BlitzJumpscare:Clone()
+Vfx.Enabled = true
+Vfx.Parent = game:GetService("Lighting")
+
+local Beam = BlitzClone.Blitz.Blitz
+
+local CameraTarget = Instance.new("Attachment")
+CameraTarget.Parent = Beam.Attachment0.Parent
+
+CameraTarget.WorldPosition =
+	(Beam.Attachment0.WorldPosition + Beam.Attachment1.WorldPosition) / 2
+
+for _, Obj in ipairs(BlitzClone:GetDescendants()) do
+	if Obj:IsA("Attachment") and #Obj:GetChildren() > 0 then
+		Obj:Destroy()
+	end
+end
+
+local Config = {
+    Range = 1000,                          
+    DarkenPercent = 0.11,                
+    AutoScanInterval = 0.1,              
+    
+    SoundId = "rbxassetid://13303926122", 
+    SoundVolume = 0,                   
+    SoundDistance = 150,                 
+    
+    ParticleTexture = "rbxassetid://257173628", 
+    ParticleDuration = 0.3,              
+}
+
+local Workspace = workspace
+
+local function playBreakSound(part)
+    if not part then return end
+    local sound = Instance.new("Sound")  
+    sound.SoundId = Config.SoundId
+    sound.Volume = Config.SoundVolume
+    sound.RollOffMaxDistance = Config.SoundDistance
+    sound.Parent = part  
+    sound:Play()  
+    sound.Ended:Connect(function() sound:Destroy() end)
+end
+
+local function createPressureSparkEffect(part)
+    if not part then return end
+
+    local core = Instance.new("ParticleEmitter")
+    core.Name = "SparkCore"
+    core.Texture = Config.ParticleTexture
+    core.Rate = 55                         
+    core.Speed = NumberRange.new(0)         
+    core.Lifetime = NumberRange.new(10)     
+    core.Size = NumberSequence.new(1.5)     
+    core.RotSpeed = NumberRange.new(1500, 2500) 
+    core.Rotation = NumberRange.new(0, 360)
+    core.Transparency = NumberSequence.new(0)
+    core.LightEmission = 1
+    core.LightInfluence = 0
+    core.SpreadAngle = Vector2.new(360, 360)
+    core.Parent = part
+
+    local ring = Instance.new("ParticleEmitter")
+    ring.Name = "SparkRing"
+    ring.Texture = Config.ParticleTexture
+    ring.Rate = 55                         
+    ring.Speed = NumberRange.new(5, 10)     
+    ring.Lifetime = NumberRange.new(0.3)    
+    ring.Size = NumberSequence.new(1.2)
+    ring.RotSpeed = NumberRange.new(3000, 4500) 
+    ring.Rotation = NumberRange.new(0, 360)
+    ring.Transparency = NumberSequence.new(0)
+    ring.LightEmission = 1
+    ring.LightInfluence = 0
+    ring.EmissionDirection = Enum.NormalId.Top
+    ring.SpreadAngle = Vector2.new(360, 0)  
+    ring.Parent = part
+
+    task.delay(Config.ParticleDuration, function()
+        if core then core:Destroy() end
+        if ring then ring:Destroy() end
+    end)
+end
+
+local function explodeLightAndSign(obj)
+    if obj:IsA("BasePart") and obj.Name == "Sign" then
+        for _, gui in ipairs(obj:GetChildren()) do
+            if gui:IsA("SurfaceGui") then
+                for _, label in ipairs(gui:GetDescendants()) do
+                    if label:IsA("TextLabel") and not label:GetAttribute("Darkened") then
+                        label:SetAttribute("Darkened", true)
+                        local originalColor = label.TextColor3
+                        label.TextColor3 = Color3.new(
+                            originalColor.R * Config.DarkenPercent, 
+                            originalColor.G * Config.DarkenPercent, 
+                            originalColor.B * Config.DarkenPercent
+                        )
+                    end
+                end
+            end
+        end
+        return
+    end
+
+    if obj:IsA("BasePart") then
+        local path = obj:GetFullName()
+        if path:find("%.Lights%.Neon") or path:find("%.Lights%.SmallNeon") or path:find("%.Lights%.Nec") then
+            if not obj:GetAttribute("Broken") then
+                obj:SetAttribute("Broken", true)
+                
+                local rootLightsModel = obj.Parent
+                if rootLightsModel then
+                    playBreakSound(obj)
+                    createPressureSparkEffect(obj)
+                    
+                    for _, descendant in ipairs(rootLightsModel:GetDescendants()) do
+                        if descendant:IsA("BasePart") then
+                            descendant.Material = Enum.Material.Glass
+                        elseif descendant:IsA("Light") then
+                            task.spawn(function()
+                                local endTime = os.clock() + 0.2
+                                while os.clock() < endTime do
+                                    descendant.Enabled = not descendant.Enabled
+                                    task.wait(math.random(1, 6) / 100)
+                                end
+                                descendant.Enabled = false
+                            end)
+                        end
+                    end
+                else
+                    obj.Material = Enum.Material.Glass
+                    playBreakSound(obj)
+                    createPressureSparkEffect(obj)
+                end
+            end
+        end
+    end
+end
+
+task.spawn(function()
+    local allObjects = Workspace:GetDescendants()
+    for i = 1, #allObjects do
+        local obj = allObjects[i]
+        if obj then
+            explodeLightAndSign(obj)
+        end
+    end
+end)
+
+local EnableAutoExplode = true
+
+Workspace.DescendantAdded:Connect(function(obj)
+	if not EnableAutoExplode then
+		return
+	end
+
+	explodeLightAndSign(obj)
+end)
+
+task.spawn(function()
+	local Players = game:GetService("Players")
+	local RunService = game:GetService("RunService")
+
+	local LPlayer = Players.LocalPlayer
+	local Char = LPlayer.Character or LPlayer.CharacterAdded:Wait()
+	local Hum = Char:FindFirstChildOfClass("Humanoid")
+	local HRP = Char:FindFirstChild("HumanoidRootPart")
+	local Cam = workspace.CurrentCamera
+	
+	local OldWalkSpeed = Hum.WalkSpeed
+local Freeze = true
+
+task.spawn(function()
+	while Freeze and Hum.Parent do
+		Hum.WalkSpeed = 0
+		task.wait()
+	end
+end)
+
+	local Root = BlitzClone.Blitz
+local LookAt = BlitzClone.Blitz.BlitzTop
+
+	if not (Hum and HRP and Root) then
+		return
+	end
+
+	Cam.CameraType = Enum.CameraType.Scriptable
+
+	local Con
+	Con = RunService.RenderStepped:Connect(function()
+		if not BlitzClone.Parent or not Root.Parent then
+			if Con then
+				Con:Disconnect()
+			end
+
+			Cam.CameraType = Enum.CameraType.Custom
+			Cam.CameraSubject = Hum
+			return
+		end
+
+		Cam.CFrame = CFrame.new(
+	Cam.CFrame.Position,
+	CameraTarget.WorldPosition
+)
+	end)
+
+	for i = 1, 6 do
+		task.wait(math.random(3, 10) / 5)
+
+		if not BlitzClone.Parent or not Root.Parent then
+			break
+		end
+
+		local Dir = (HRP.Position - Root.Position).Unit
+local NewPos
+
+if i == 6 then
+	-- Lần cuối: cách player đúng 8 studs
+	NewPos = HRP.Position - Dir * 5
+	
+	task.wait(0.7)
+	local Players = game:GetService("Players")
+
+local LPlayer = Players.LocalPlayer
+local Gui = Instance.new("ScreenGui")
+
+Gui.Name = "BlackFrame"
+Gui.IgnoreGuiInset = true
+Gui.ZIndexBehavior = Enum.ZIndexBehavior.Global
+Gui.Parent = LPlayer.PlayerGui
+
+local Frame = Instance.new("Frame")
+Frame.Name = "Black"
+Frame.Size = UDim2.fromScale(1, 1)
+Frame.Position = UDim2.fromScale(0, 0)
+Frame.BackgroundColor3 = Color3.new(0, 0, 0)
+Frame.BorderSizePixel = 0
+Frame.ZIndex = 1000000000
+Frame.Parent = Gui
+task.wait(2.6)
+Gui:Destroy() 
+else
+	local Offset = math.random(3, 5)
+	NewPos = Root.Position + Dir * Offset
+end
+
+BlitzClone:PivotTo(CFrame.new(NewPos, HRP.Position))
+	end
+
+	if Con then
+		Con:Disconnect()
+	end
+
+	Cam.CameraType = Enum.CameraType.Custom
+	Cam.CameraSubject = Hum
+
+	if BlitzClone.Parent then
+	local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local function killOneShot()
+    local damageRemote = ReplicatedStorage:FindFirstChild("LocalDamage", true) or ReplicatedStorage:FindFirstChild("ChangeHealth", true)
+    
+    if damageRemote and damageRemote:IsA("RemoteEvent") then
+        damageRemote:FireServer(1000, "SittingItOut", 1, nil)
+        damageRemote:FireServer("Damage", 1000)
+        print("ngol")
+    else
+        print("đéo được")
+    end
+end
+
+task.spawn(function() 
+killOneShot()
+end) 
+
+task.wait(1)
+
+	Vfx:Destroy() 
+		BlitzClone:Destroy()
+		Freeze = false
+Hum.WalkSpeed = OldWalkSpeed
+EnableAutoExplode = false
+	end
+end)
+
+task.wait(0.01)
+    workspace.Blitz:Destroy() 
+ end,
+    OnKillPlayer = function() end,
+    OnDespawning = function() end,
+    OnDespawned = function() end,
+})
