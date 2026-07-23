@@ -9,7 +9,7 @@ jumpscare.SoundId = "rbxassetid://18940262310"
 spawnEntity({
     AssetId = "https://codeberg.org/qjjdjdjjd/cak/raw/branch/main/Angler.txt.rbxmx",
     EntityName = "Angler",
-    MoveSpeed = 85,
+    MoveSpeed = 88,
     HitboxRadius = 30,
     ShakeRadius = 100,
     DamageAmount = 0,    
