@@ -9,7 +9,7 @@ game:GetService("ContentProvider"):PreloadAsync({
 spawnEntity({
     AssetId = "https://codeberg.org/qjjdjdjjd/cak/raw/branch/main/Place_12552538292_Part_Blitz_1784292281.txt.rbxmx",
     EntityName = "Blitz",
-    MoveSpeed = 400,
+    MoveSpeed = 288,
     HitboxRadius = 35,
     ShakeRadius = 120,
     DamageAmount = 0,    
