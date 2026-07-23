@@ -1,84 +1,49 @@
 local spawnEntity = loadstring(game:HttpGet("https://codeberg.org/qjjdjdjjd/Pressure-Files/raw/branch/main/Pressure-Entity-Spawner"))()
 
-local HttpService = game:GetService("HttpService")
+function GitAud(soundgit, filename)
+    local file = filename..".mp3"
+    
+    if not isfile(file) then
+        writefile(file, game:HttpGet(soundgit))
+    end
 
-local Folder = "GitAudCache"
+    local asset = (getcustomasset or getsynasset)(file)
 
-if not isfolder(Folder) then
-	makefolder(Folder)
+    return asset
 end
 
-local function Hash(Text)
-	local Hash = 2166136261
+function CustomGitSound(soundlink, volume, filename, soundName, parent, looped)
+    local sound = Instance.new("Sound")
 
-	for i = 1, #Text do
-		Hash = bit32.bxor(Hash, string.byte(Text, i))
-		Hash = (Hash * 16777619) % 4294967296
-	end
+    sound.SoundId = GitAud(soundlink, filename)
+    sound.Parent = parent or workspace
+    sound.Volume = volume or 1
+    sound.RollOffMaxDistance = 400
+    sound.RollOffMinDistance = 5
+    sound.PlaybackSpeed = 1
+    sound.Name = soundName or "bgtheme"
+    sound.Looped = looped or false
 
-	return string.format("%08X", Hash)
+    return sound
 end
 
-function GitAud(Url)
-	local File = Folder .. "/" .. Hash(Url) .. ".mp3"
-
-	if not isfile(File) then
-		writefile(File, game:HttpGet(Url))
-	end
-
-	return getsynasset and getsynasset(File)
-		or getcustomasset and getcustomasset(File)
-		or error("Executor doesn't support custom assets.")
-end
-
-function GitCustomSound(Sound, Url)
-	local Asset = GitAud(Url)
-
-	Sound.SoundId = Asset
-	Sound.Loaded:Wait()
-
-	return Sound
-end
-
-local Sound = Instance.new("Sound")
-Sound.Volume = 2
-Sound.Parent = workspace
-Sound.Name = "FrogerJumpscare" 
-
-GitCustomSound(
-	Sound,
-	"https://github.com/cakmay227-svg/random/raw/refs/heads/main/XRecorder_Edited_20260722_03.mp3"
+task.spawn(function() 
+CustomGitSound(
+    "https://github.com/cakmay227-svg/random/raw/refs/heads/main/XRecorder_Edited_20260722_03.mp3?raw=true",
+    2,
+    "JSSJ",
+    "JSJJXJ",
+    workspace,
+    false
 )
-
-local ContentProvider = game:GetService("ContentProvider")
-
-local JumpscareImages = {
-	"rbxassetid://96835242250246",
-	"rbxassetid://111183933445054"
-}
-
-local Cache = {}
-
-for _, Id in ipairs(JumpscareImages) do
-	local Img = Instance.new("ImageLabel")
-	Img.Image = Id
-	table.insert(Cache, Img)
-end
-
-task.spawn(function()
-	ContentProvider:PreloadAsync(Cache)
-
-	for _, Img in ipairs(Cache) do
-		Img:Destroy()
-	end
-end)
+end) 
 
 spawnEntity({
     AssetId = "https://codeberg.org/qjjdjdjjd/cak/raw/branch/main/Froger.txt.rbxmx",
     EntityName = "Froger",
     MoveSpeed = 90,
     HitboxRadius = 30,
-    ShakeRadius = 100,
+    ShakeRadius = 70,
     DamageAmount = 0,    
     InstantKill = true,
     ConstantBloodSucking = false,
@@ -106,7 +71,7 @@ spawnEntity({
     ShakeSpeedMultiplier = 1.5,
     LightFlickerTime = 0.45,       
     
-    EnableFlicker = true,
+    EnableFlicker = false,
     EnableShake = true,
     EnableBlackout = true,
     EnableBreakLights = true,
@@ -139,6 +104,7 @@ spawnEntity({
     OnKillPlayer = function()
     local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
+local ContentProvider = game:GetService("ContentProvider")
 
 local player = Players.LocalPlayer
 
@@ -166,31 +132,42 @@ image.Parent = bg
 
 local finalImage = "rbxassetid://111183933445054"
 
--- preload ảnh kết thúc trướ
+-- preload ảnh kết thúc trước
+local preload = Instance.new("ImageLabel")
+preload.Image = finalImage
+preload.Size = UDim2.fromOffset(1,1)
+preload.BackgroundTransparency = 1
+preload.Parent = gui
 
-Sound:Play()
-
-Sound.Ended:Connect(function() 
-Sound:Destroy() 
+task.spawn(function() 
+ContentProvider:PreloadAsync({preload})
 end) 
+
+preload:Destroy()
+
+workspace.JSJJXJ:Play()
+
+workspace.JSJJXJ.Ended:Connect(function() 
+workspace.JSJJXJ:Destroy()
+end)
 
 local shakeRunning = true
 
 TweenService:Create(
 	image,
 	TweenInfo.new(
-		0.6,
+		0.7,
 		Enum.EasingStyle.Linear,
 		Enum.EasingDirection.Out
 	),
 	{
-		Size = UDim2.fromOffset(1500,1500)
+		Size = UDim2.fromOffset(1700, 1700)
 	}
 ):Play()
 
 task.spawn(function()
 	local basePos = UDim2.fromScale(0.5,0.5)
-	local offset = 3
+	local offset = 5
 	local right = true
 
 	while shakeRunning do
@@ -224,6 +201,10 @@ task.delay(0.6,function()
 	gui:Destroy()
 end)
  end,
-    OnDespawning = function() end,
+    OnDespawning = function() 
+    if workspace:FindFirstChild("JSJJXJ") then
+    workspace.JSJJXJ:Destroy()
+    end
+end,
     OnDespawned = function() end,
 })
