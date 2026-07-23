@@ -1,0 +1,92 @@
+local function CacheScript(url, name)
+    local path = name .. ".lua"
+
+    if isfile(path) then
+        return readfile(path)
+    end
+
+    local src = game:HttpGet(url)
+    writefile(path, src)
+
+    return src
+end
+
+local spawnEntity = loadstring(CacheScript(
+    "https://codeberg.org/qjjdjdjjd/Pressure-Files/raw/branch/main/Pressure-Entity-Spawner",
+    "Pressure-Entity-Spawner"
+))()
+
+spawnEntity({
+    AssetId = "https://raw.githubusercontent.com/cakmay227-svg/random/refs/heads/main/chai.txt.rbxmx",
+    EntityName = "ChainsmokerFake",
+    MoveSpeed = 22,
+    HitboxRadius = 35,
+    ShakeRadius = 70,
+    DamageAmount = 0,    
+    InstantKill = false,
+    ConstantBloodSucking = false,
+    DelayEachDamage = 0.1,
+    
+    DelayWhenSpawned = true,     
+    Delay = 0, 
+    Rebounding = false,  
+    Reversed = false, 
+    MinRebounds = 2,   
+    MaxRebounds = 2,
+    DelayEachRebound = 2.5,
+    WallPenetrating = false,
+    IgnoreHiding = true,
+    RoomLimits = false,
+    RoomLimitValue = 5,
+    EntityLifeTime = "Forever",
+    
+    YOffset = Vector3.new(0, 0, 0),
+    DespawnYOffset = Vector3.new(0, 300, 0),
+    Tolerance = 0.1,
+    FlickerSpeed = 75,
+    MaxDarkness = 0.2,
+    ShakeIntensity = 0.5,
+    ShakeSpeedMultiplier = 1.5,
+    LightFlickerTime = 0.35,       
+    
+    EnableFlicker = true,
+    EnableShake = true,
+    EnableBlackout = true,
+    EnableBreakLights = true,
+    
+    GithubSound = "",         
+    PlayGitSoundWhenSpawned = false, 
+    SoundVolume = 1,        
+    SoundPlaybackSpeed = 1,
+
+    LightBreakRange = 35,                          
+    LightDarkenPercent = 0.11,                
+    LightAutoScanInterval = 0.1,              
+    
+    LightSoundId = "rbxassetid://13303926122", 
+    LightSoundVolume = 0.1,                   
+    LightSoundDistance = 20,                 
+    
+    LightParticleTexture = "rbxassetid://257173628", 
+    LightParticleDuration = 0.3,
+    
+    DeathImage = "rbxassetid://79804547175661",
+    DeathName = "Chainsmoker",
+    DeathNotes = "Bootleg",
+    DeathImageColor = Color3.fromRGB(255, 255, 255), -- Mặc định là trắng (giữ nguyên màu ảnh)
+    
+    OnSpawn = function() end,
+    OnMoveStart = function() end,
+    OnRoomEnter = function(roomName) end,
+    OnDamagePlayer = function() 
+    workspace.ChainsmokerFake:Destroy()
+    
+    loadstring(CacheScript(
+        "https://raw.githubusercontent.com/cakmay227-svg/random/refs/heads/main/ChainsmokerJumpscare",
+        "ChainsmokerJumpscare"
+    ))()
+end,
+    OnKillPlayer = function() end,
+    OnDespawning = function() end,
+    OnDespawned = function() end,
+})
