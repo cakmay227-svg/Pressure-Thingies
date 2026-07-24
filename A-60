@@ -1,0 +1,314 @@
+local function CacheScript(url, name)
+    local path = name .. ".lua"
+
+    if isfile(path) then
+        return readfile(path)
+    end
+
+    local src = game:HttpGet(url)
+    writefile(path, src)
+
+    return src
+end
+
+local function Notify(text)
+	local gui = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+
+	local screen = Instance.new("ScreenGui")
+	screen.IgnoreGuiInset = true
+	screen.ResetOnSpawn = false
+	screen.Parent = gui
+
+	local label = Instance.new("TextLabel")
+	label.AnchorPoint = Vector2.new(0.5, 1)
+	label.Position = UDim2.new(0.5, 0.5, 0.75, 0)
+	label.Size = UDim2.new(0, 1200, 0, 24)
+	label.BackgroundTransparency = 1
+	label.Text = tostring(text)
+	label.TextColor3 = Color3.fromRGB(255, 0, 0)
+	label.TextStrokeTransparency = 0
+	label.TextStrokeColor3 = Color3.new(0, 0, 0)
+	label.Font = Enum.Font.GothamBold
+	label.TextSize = 20
+	label.TextScaled = true
+	label.Parent = screen
+
+local c = Instance.new("UITextSizeConstraint")
+c.MaxTextSize = 20
+c.MinTextSize = 14
+c.Parent = label
+
+	task.wait(4)
+		screen:Destroy()
+end
+
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+
+local Player = Players.LocalPlayer
+local Character = Player.Character or Player.CharacterAdded:Wait()
+local HRP = Character:WaitForChild("HumanoidRootPart")
+
+function GitAud(soundgit, filename)
+    local file = filename..".mp3"
+    
+    if not isfile(file) then
+        writefile(file, game:HttpGet(soundgit))
+    end
+
+    local asset = (getcustomasset or getsynasset)(file)
+
+    return asset
+end
+
+local function GitImg(imageGit, filename)
+    local file = filename .. ".png"
+
+    if not isfile(file) then
+        local data = game:HttpGet(imageGit)
+
+        assert(#data > 0, "Failed to download image")
+
+        writefile(file, data)
+    end
+
+    return (getcustomasset or getsynasset)(file)
+end
+
+function CustomGitSound(soundlink, volume, distance, filename, soundName, parent, looped)
+    local sound = Instance.new("Sound")
+
+    sound.SoundId = GitAud(soundlink, filename)
+    sound.Parent = parent or workspace
+    sound.Volume = volume or 1
+    sound.RollOffMaxDistance = distance or 100
+    sound.RollOffMinDistance = 5
+    sound.PlaybackSpeed = 1
+    sound.Name = soundName or "bgtheme"
+    sound.Looped = looped or false
+
+    sound:Play()
+
+    return sound
+end
+
+local ContentProvider = game:GetService("ContentProvider")
+
+local Model = Instance.new("Model")
+Model.Name = "A-60"
+Model.Parent = workspace
+
+local Root = Instance.new("Part")
+Root.Name = "Root"
+Root.Size = Vector3.new(2, 2, 2)
+Root.Anchored = true
+Root.CanCollide = false
+Root.CanQuery = false
+Root.CanTouch = false
+Root.Transparency = 1
+Root.Parent = Model
+
+Model.PrimaryPart = Root
+
+local Attachment = Instance.new("Attachment")
+Attachment.Parent = Root
+
+local Particle = Instance.new("ParticleEmitter")
+Particle.Parent = Attachment
+Particle.Enabled = true
+Particle.Rate = 1
+Particle.Lifetime = NumberRange.new(999999)
+Particle.Speed = NumberRange.new(0)
+Particle.Acceleration = Vector3.zero
+Particle.Drag = 1000
+Particle.Size = NumberSequence.new(8) -- tùy kích thước
+
+task.spawn(function() 
+Particle.Texture = GitImg(
+    "https://raw.githubusercontent.com/cakmay227-svg/random/refs/heads/main/Untitled188_20260724123526.png",
+    "CCUUDU"
+)
+end)
+
+Particle.LockedToPart = true
+Particle.EmissionDirection = Enum.NormalId.Top
+Particle.SpreadAngle = Vector2.zero
+Particle.Transparency = NumberSequence.new(0)
+
+Particle.Rotation = NumberRange.new(0)
+Particle.RotSpeed = NumberRange.new(0)
+
+local Light = Instance.new("PointLight")
+Light.Parent = Attachment
+Light.Color = Color3.fromRGB(255, 0, 0)
+Light.Range = 40
+Light.Brightness = 7
+
+local Smoke = Instance.new("ParticleEmitter")
+Smoke.Name = "EntitySmoke"
+Smoke.Parent = Model.Root.Attachment
+
+Smoke.Texture = "rbxasset://textures/particles/smoke_main.dds"
+
+Smoke.LockedToPart = true
+Smoke.Rate = 250
+Smoke.Lifetime = NumberRange.new(1.8, 2.5)
+Smoke.Speed = NumberRange.new(0.3, 1)
+Smoke.RotSpeed = NumberRange.new(-15, 15)
+Smoke.SpreadAngle = Vector2.new(180, 180)
+
+Smoke.Size = NumberSequence.new({
+	NumberSequenceKeypoint.new(0, 10),
+	NumberSequenceKeypoint.new(0.4, 11),
+	NumberSequenceKeypoint.new(1, 12)
+})
+
+Smoke.Transparency = NumberSequence.new({
+	NumberSequenceKeypoint.new(0, 0.15),
+	NumberSequenceKeypoint.new(0.8, 0.25),
+	NumberSequenceKeypoint.new(1, 1)
+})
+
+Smoke.Color = ColorSequence.new(Color3.fromRGB(77, 0, 0))
+Smoke.LightEmission = 0
+Smoke.ZOffset = -1
+Smoke.LightInfluence = 0
+Smoke.Enabled = true
+
+local RunService = game:GetService("RunService")
+
+RunService.RenderStepped:Connect(function()
+	local t = tick()
+
+	Attachment.Position = Vector3.new(
+		math.sin(t * 0.8) * 0.1,
+		math.sin(t * 1.5) * 0.15,
+		0
+	)
+end)
+
+task.spawn(function() 
+CustomGitSound(
+    "https://github.com/cakmay227-svg/random/raw/refs/heads/main/FARA60.mp3?raw=true",
+    4,
+    300,
+    "A699&&=",
+    "FarAm",
+    Model.Root,
+    true
+)
+end)
+
+task.spawn(function() 
+CustomGitSound(
+    "https://github.com/cakmay227-svg/random/raw/refs/heads/main/NEARA60.mp3?raw=true",
+    7,
+    200,
+    "UUDHDDHJ&=",
+    "NearAm",
+    Model.Root,
+    true
+)
+end) 
+
+local spawnEntity = loadstring(game:HttpGet("https://raw.githubusercontent.com/cakmay227-svg/random/refs/heads/main/doorspre"))()
+
+spawnEntity({
+    AssetId = workspace["A-60"],
+    EntityName = "A-60ENTITY",
+    MoveSpeed = 200,
+    HitboxRadius = 35,
+    ShakeRadius = 100,
+    DamageAmount = 0,    
+    InstantKill = false,
+    ConstantBloodSucking = false,
+    DelayEachDamage = 0.1,
+    
+    DelayWhenSpawned = true,     
+    Delay = 3, 
+    Rebounding = false,  
+    Reversed = false, 
+    MinRebounds = 2,   
+    MaxRebounds = 2,
+    DelayEachRebound = 2.5,
+    WallPenetrating = false,
+    IgnoreHiding = true,
+    RoomLimits = false,
+    RoomLimitValue = 5,
+    EntityLifeTime = "Forever",
+    
+    YOffset = Vector3.new(0, 5, 0),
+    DespawnYOffset = Vector3.new(0, 300, 0),
+    Tolerance = 0.1,
+    FlickerSpeed = 75,
+    MaxDarkness = 0.2,
+    ShakeIntensity = 0.5,
+    ShakeSpeedMultiplier = 1.5,
+    LightFlickerTime = 0.35,       
+    
+    EnableFlicker = false,
+    EnableShake = true,
+    EnableBlackout = true,
+    EnableBreakLights = true,
+    
+    GithubSound = "",         
+    PlayGitSoundWhenSpawned = false, 
+    SoundVolume = 1,        
+    SoundPlaybackSpeed = 1,
+
+    LightBreakRange = 35,                          
+    LightDarkenPercent = 0.11,                
+    LightAutoScanInterval = 0.1,              
+    
+    LightSoundId = "rbxassetid://13303926122", 
+    LightSoundVolume = 0,                   
+    LightSoundDistance = 20,                 
+    
+    LightParticleTexture = "rbxassetid://257173628", 
+    LightParticleDuration = 0.3,
+    
+    DeathImage = "rbxassetid://79804547175661",
+    DeathName = "Multi Monster",
+    DeathNotes = "Bootleg",
+    DeathImageColor = Color3.fromRGB(255, 255, 255), -- Mặc định là trắng (giữ nguyên màu ảnh)
+    
+    OnSpawn = function() 
+    task.spawn(function() 
+    task.wait(3)
+    local Messages = {
+	"coming through.",
+	"coming up.",
+	"ready?",
+	"incoming.",
+	"heads up.",
+	"think fast."
+}
+
+Notify(Messages[math.random(#Messages)])
+end) 
+
+task.wait(0.7)
+end,
+    OnMoveStart = function() end,
+    OnRoomEnter = function(roomName) end,
+    OnDamagePlayer = function() 
+    task.spawn(function() 
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/cakmay227-svg/Pressure-Thingies/refs/heads/main/a60jumpscare"))()
+end) 
+end,
+    OnKillPlayer = function() end,
+    OnDespawning = function() 
+    task.spawn(function() 
+    task.wait(3)
+    local Messages = {
+	"glad to see you're paying attention. you've got this",
+	"glad to see you've still got your head in the game.",
+	"good job, see you again soon.",
+	"we both die tonight, one of us, a bit later than the other."
+}
+
+Notify(Messages[math.random(#Messages)])
+end) 
+end,
+    OnDespawned = function() end,
+})
