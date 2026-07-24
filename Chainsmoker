@@ -19,7 +19,7 @@ local spawnEntity = loadstring(CacheScript(
 spawnEntity({
     AssetId = "https://raw.githubusercontent.com/cakmay227-svg/random/refs/heads/main/chai.txt.rbxmx",
     EntityName = "ChainsmokerFake",
-    MoveSpeed = 22,
+    MoveSpeed = 27,
     HitboxRadius = 35,
     ShakeRadius = 70,
     DamageAmount = 0,    
