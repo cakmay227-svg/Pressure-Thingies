@@ -211,7 +211,10 @@ CustomGitSound(
 )
 end) 
 
-local spawnEntity = loadstring(game:HttpGet("https://raw.githubusercontent.com/cakmay227-svg/random/refs/heads/main/doorspre"))()
+local spawnEntity = loadstring(CacheScript(
+    "https://codeberg.org/qjjdjdjjd/Pressure-Files/raw/branch/main/Pressure-Entity-Spawner",
+    "Kdkdkxkjcij"
+))()
 
 spawnEntity({
     AssetId = workspace["A-60"],
@@ -293,7 +296,10 @@ end,
     OnRoomEnter = function(roomName) end,
     OnDamagePlayer = function() 
     task.spawn(function() 
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/cakmay227-svg/Pressure-Thingies/refs/heads/main/a60jumpscare"))()
+    loadstring(CacheScript(
+    "https://raw.githubusercontent.com/cakmay227-svg/Pressure-Thingies/refs/heads/main/a60jumpscare",
+    "a60jumpscare"
+))()
 end) 
 end,
     OnKillPlayer = function() end,
