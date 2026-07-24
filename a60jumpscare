@@ -63,7 +63,7 @@ local function Notify(text1, text2)
 		label.BackgroundTransparency = 1
 		label.Text = tostring(text)
 		label.ZIndex = 1000000100000000000
-		label.TextColor3 = Color3.fromRGB(255, 0, 0)
+		label.TextColor3 = Color3.fromRGB(224, 0, 0)
 		label.TextStrokeTransparency = 0
 		label.TextStrokeColor3 = Color3.new(0, 0, 0)
 		label.Font = Enum.Font.GothamBold
