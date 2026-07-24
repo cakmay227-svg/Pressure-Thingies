@@ -1,0 +1,178 @@
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+
+function GitAud(soundgit, filename)
+    local file = filename..".mp3"
+    
+    if not isfile(file) then
+        writefile(file, game:HttpGet(soundgit))
+    end
+
+    local asset = (getcustomasset or getsynasset)(file)
+
+    return asset
+end
+
+function CustomGitSound(soundlink, volume, distance, filename, soundName, parent, looped)
+    local sound = Instance.new("Sound")
+
+    sound.SoundId = GitAud(soundlink, filename)
+    sound.Parent = parent or workspace
+    sound.Volume = volume or 1
+    sound.RollOffMaxDistance = distance or 100
+    sound.RollOffMinDistance = 5
+    sound.PlaybackSpeed = 1
+    sound.Name = soundName or "bgtheme"
+    sound.Looped = looped or false
+
+    sound:Play()
+    
+    sound.Ended:Connect(function() 
+    sound:Destroy() 
+    end) 
+
+    return sound
+end
+
+task.spawn(function() 
+CustomGitSound(
+    "https://github.com/cakmay227-svg/Pressure-Thingies/raw/refs/heads/main/a60jukoscar.mp3?raw=true",
+    2,
+    10000000000,
+    "omgkdkdk",
+    "caikd",
+    workspace,
+    false
+)
+end) 
+
+local function Notify(text1, text2)
+	local gui = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+
+	local screen = Instance.new("ScreenGui")
+	screen.IgnoreGuiInset = true
+	screen.DisplayOrder = 1000000
+	screen.ResetOnSpawn = false
+	screen.Parent = gui
+
+	local function CreateLabel(posY, text)
+		local label = Instance.new("TextLabel")
+		label.AnchorPoint = Vector2.new(0.5, 1)
+		label.Position = UDim2.new(0.5, 0, posY, 0)
+		label.Size = UDim2.new(0, 1200, 0, 24)
+		label.BackgroundTransparency = 1
+		label.Text = tostring(text)
+		label.ZIndex = 1000000100000000000
+		label.TextColor3 = Color3.fromRGB(255, 0, 0)
+		label.TextStrokeTransparency = 0
+		label.TextStrokeColor3 = Color3.new(0, 0, 0)
+		label.Font = Enum.Font.GothamBold
+		label.TextSize = 36
+		label.TextScaled = true
+		label.Parent = screen
+
+		local c = Instance.new("UITextSizeConstraint")
+		c.MaxTextSize = 40
+		c.MinTextSize = 28
+		c.Parent = label
+
+		return label
+	end
+
+	CreateLabel(0.67, text1)
+
+	task.wait(3)
+		if screen.Parent then
+			CreateLabel(0.85, text2) -- nằm dưới text đầu
+		end
+
+	task.wait(4)
+		screen:Destroy()
+end
+
+local gui = Instance.new("ScreenGui")
+gui.IgnoreGuiInset = true
+gui.ResetOnSpawn = false
+gui.DisplayOrder = 999999
+gui.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.fromScale(1, 1)
+frame.BackgroundColor3 = Color3.new(0, 0, 0)
+frame.BorderSizePixel = 0
+frame.ZIndex = 999999
+frame.Parent = gui
+
+local image = Instance.new("ImageLabel")
+image.BackgroundTransparency = 1
+image.Image = "rbxassetid://136939266991427"
+image.AnchorPoint = Vector2.new(0.5, 0.5)
+image.Position = UDim2.new(0.5, 0, 0.53, 0) -- dịch lên một chút
+image.Size = UDim2.fromOffset(420, 420)
+image.ZIndex = 999999
+image.Parent = frame
+
+local RunService = game:GetService("RunService")
+
+local defaultPos = UDim2.new(0.5, 0, 0.53, 0)
+
+local left = defaultPos + UDim2.fromOffset(-4, 0)
+local right = defaultPos + UDim2.fromOffset(4, 0)
+
+task.spawn(function()
+	local side = false
+
+	while image.Parent do
+		side = not side
+		image.Position = side and left or right
+		task.wait(0.05)
+	end
+end)
+
+task.wait(3)
+
+task.spawn(function() 
+local Messages = {
+    {"you remember me?", "i remember you."},
+    {"come on. ", "you can do better than that."},
+    {"we've been doing this same song and dance for years.", "why do you still continue to fail?"},
+    {"your taste in games suck.", "go play something else."},
+    {"start paying attention.", "you're getting sloppy."}, 
+    {"hello, we meet again.", "sorry i had to cut our talk short."}, 
+    {"it was nice seeing you again.", "so sad it had to be cut for short."}
+}
+
+local msg = Messages[math.random(#Messages)]
+Notify(msg[1], msg[2])
+end) 
+
+task.wait(7.3)
+
+TweenService:Create(
+	image,
+	TweenInfo.new(1, Enum.EasingStyle.Linear),
+	{
+		ImageTransparency = 1
+	}
+):Play()
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local function killOneShot()
+    local damageRemote = ReplicatedStorage:FindFirstChild("LocalDamage", true) or ReplicatedStorage:FindFirstChild("ChangeHealth", true)
+    
+    if damageRemote and damageRemote:IsA("RemoteEvent") then
+        damageRemote:FireServer(100, "SittingItOut", 1, nil)
+        damageRemote:FireServer("Damage", 100)
+        print("ngol")
+    else
+        print("đéo được")
+    end
+end
+
+task.spawn(function() 
+killOneShot()
+end) 
+
+task.wait(1)
+gui:Destroy()
