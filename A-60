@@ -219,7 +219,7 @@ local spawnEntity = loadstring(CacheScript(
 spawnEntity({
     AssetId = workspace["A-60"],
     EntityName = "A-60ENTITY",
-    MoveSpeed = 200,
+    MoveSpeed = 288,
     HitboxRadius = 35,
     ShakeRadius = 100,
     DamageAmount = 0,    
