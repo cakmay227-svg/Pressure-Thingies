@@ -69,9 +69,9 @@ spawnEntity({
     MaxDarkness = 0.2,
     ShakeIntensity = 0.5,
     ShakeSpeedMultiplier = 1.5,
-    LightFlickerTime = 0.45,       
+    LightFlickerTime = 0.3,       
     
-    EnableFlicker = false,
+    EnableFlicker = true,
     EnableShake = true,
     EnableBlackout = true,
     EnableBreakLights = true,
